@@ -291,6 +291,13 @@ nav h1 a {
 
 /* mobile breakpoint */
 @media screen and (max-width: 610px) {
+  body,
+  td,
+  th,
+  p {
+    font-size: 12pt;
+  }
+
   nav h1 a {
     font-weight: 600;
   }
