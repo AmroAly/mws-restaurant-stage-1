@@ -9,6 +9,10 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 8000 // Change this to your server port
+    const url = window.location.href;
+    if(url.startsWith('https')) {
+      return `https://amroaly.github.io/mws-restaurant-stage-1/data/restaurants.json`;
+    } 
     // for dev it shoud be http://localhost:${port}
     // instead of https://amroaly.github.io/mws-restaurant-stage-1/
     return `http://localhost:${port}/data/restaurants.json`;
@@ -153,7 +157,11 @@ class DBHelper {
    */
   static imageUrlForRestaurant(restaurant) {
     // for development we need to remove "/mws-restaurant-stage-1"
-    return (`/mws-restaurant-stage-1/img/${restaurant.photograph}`);
+    const url = window.location.href;
+    if(url.startsWith('https')) {
+      return (`/mws-restaurant-stage-1/img/${restaurant.photograph}`);
+    }
+    return (`/img/${restaurant.photograph}`);    
   }
 
   /**
