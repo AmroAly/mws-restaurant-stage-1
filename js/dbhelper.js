@@ -11,7 +11,7 @@ class DBHelper {
     const port = 8000 // Change this to your server port
     // for dev it shoud be http://localhost:${port}
     // instead of https://amroaly.github.io/mws-restaurant-stage-1/
-    return `https://amroaly.github.io/mws-restaurant-stage-1/data/restaurants.json`;
+    return `http://localhost:${port}/data/restaurants.json`;
   }
 
   /**
