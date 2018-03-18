@@ -300,7 +300,8 @@ nav h1 a {
     font-size: 12pt;
   }
 
-  nav h1 a {
+  nav h1 a,
+  #restaurants-list li h1 {
     font-weight: 600;
   }
 }
