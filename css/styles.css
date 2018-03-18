@@ -294,7 +294,9 @@ nav h1 a {
   body,
   td,
   th,
-  p {
+  p,
+  #restaurants-list li a,
+  #restaurants-list p {
     font-size: 12pt;
   }
 
