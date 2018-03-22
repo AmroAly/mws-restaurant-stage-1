@@ -216,9 +216,17 @@ nav h1 a {
   width: 100%;
 }
 .inside #footer {
-  bottom: 0;
-  position: absolute;
-  width: 50%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  width: 100%;
+  background-color: #444;
+  color: #aaa;
+  font-size: 8pt;
+  letter-spacing: 1px;
+  padding: 25px 0;
+  text-align: center;
+  text-transform: uppercase;
 }
 #restaurant-name {
   color: #f18200;
@@ -289,7 +297,7 @@ nav h1 a {
 
 /* media queries */
 
-/* mobile breakpoint */
+/* mobile breakpoint for index.html */
 @media screen and (max-width: 610px) {
   body,
   td,
@@ -299,9 +307,70 @@ nav h1 a {
   #restaurants-list p {
     font-size: 12pt;
   }
-
+  nav h1 a {
+    padding: 7px;
+  }
   nav h1 a,
   #restaurants-list li h1 {
     font-weight: 600;
   }
 }
+
+/* mobile breakpoint for restaurant.html */
+@media screen and (max-width: 700px) {
+  /*====breadcrump====*/
+  #breadcrumb {
+    width: 100%;
+  }
+  #restaurant-container h1 {
+    font-weight: 600;
+  }
+  #breadcrumb li,
+  #restaurant-cuisine,
+  #restaurant-address,
+  #restaurant-hours td {
+    font-size: 13pt;
+  } 
+  .inside #map-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+  }
+  #restaurant-container {
+    width: 100%;
+    padding: 100px 0 0;
+    text-align: center;
+    background-color: #fff;
+  }
+  #restaurant-cuisine {
+    margin: 0 5% 20px;
+  }
+  #restaurant-hours {
+    width: 100%;
+    padding: 0 5% 5%;
+  }
+  #restaurant-hours tr td:first-child {
+    text-align: left;
+  }
+  #restaurant-hours tr td:last-child {
+    text-align: right;
+  }
+
+  /*===reviews-container===*/
+  #reviews-container {
+    padding: 15px 0px 60px;
+    width: 100%;
+  }
+  #reviews-container h2 {
+    text-align: center;
+  }
+  #reviews-list li {
+    max-width: 100%;
+    padding: 5%;
+    margin: auto;
+    margin-bottom: 5px;
+  }
+}
+
+
+
