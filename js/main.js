@@ -177,3 +177,19 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 }
+
+/* 
+ * Skip the map from the taborder and replace it with 
+ * .filter-options > h2 > a
+ */
+document.querySelector('nav h1 a').addEventListener('blur', () => {
+  const h2 = document.querySelector('.filter-options h2');
+  h2.tabIndex = -1;
+  h2.focus();
+  h2.classList.add('focus');
+});
+/* remove the focus on blur */
+const h2 =  document.querySelector('.filter-options h2');
+h2.addEventListener('blur', () => {
+  h2.classList.remove('focus');
+});
