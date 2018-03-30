@@ -10,7 +10,28 @@ var markers = []
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
+  // fetch restaurants data from cache
+  if(navigator.serviceWorker) {
+    fetchRestaurantsFromCache();
+  }
 });
+
+/**
+ * Fetch restaurants data from cache
+ * if any
+ */
+fetchRestaurantsFromCache = () => {
+  return caches.match('/data/restaurants.json').then(function(data) {
+    if(data) {
+      return data.json();
+    }
+  }).then(function(response) {
+    if(response.restaurants) {
+      restaurants = response.restaurants;
+      updateRestaurants();
+    }
+  });
+}
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -129,7 +150,12 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  addMarkersToMap();
+  // check if the map has been loaded
+  if(map) {
+    map.addListener('tilesloaded', function () { 
+      addMarkersToMap();
+    });
+  }
 }
 
 /**

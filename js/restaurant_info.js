@@ -2,6 +2,20 @@ let restaurant;
 var map;
 
 /**
+ * Fetch restaurant  as soon as the page is loaded.
+ */
+document.addEventListener('DOMContentLoaded', (event) => {
+  if(navigator.serviceWorker) {
+    fetchRestaurantFromURL((error, restaurant) => {
+      if(restaurant) {
+        self.restaurant = restaurant;
+        fillBreadcrumb();
+      }
+    });
+  }
+});
+
+/**
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {

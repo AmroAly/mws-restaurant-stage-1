@@ -1,0 +1,6 @@
+{
+    "name": "mws-restaurant-stage1",
+    "scope": "/",
+    "display": "standalone",
+    "start_url": "/"
+}
