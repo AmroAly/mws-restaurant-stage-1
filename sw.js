@@ -6,7 +6,7 @@
 // cache the restaurants information
 
 /* cache names */
-var staticCacheName = 'restaurant-static-v4';
+var staticCacheName = 'restaurant-static-v7';
 var contentImgsCache = 'restaurant-content-imgs';
 var allCaches = [
     staticCacheName,

@@ -30,7 +30,7 @@ fetchRestaurantsFromCache = () => {
       restaurants = response.restaurants;
       updateRestaurants();
     }
-  });
+  }).catch(() => {});
 }
 
 /**
@@ -219,7 +219,7 @@ document.querySelector('nav h1 a')
     h2.focus();
     h2.classList.add('focus');
   });
-/* remove the focus on blur */
+/* remove the focus class on blur */
 const h2 =  document.querySelector('.filter-options h2');
 h2.addEventListener('blur', () => {
   h2.classList.remove('focus');
