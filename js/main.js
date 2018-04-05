@@ -171,18 +171,18 @@ createRestaurantHTML = (restaurant) => {
   li.append(image);
 
   const name = document.createElement('h1');
-  name.tabIndex = 0;
   name.innerHTML = restaurant.name;
+  name.id = 'restaurant-name';
   li.append(name);
 
   const neighborhood = document.createElement('p');
-  neighborhood.tabIndex = 0;
   neighborhood.innerHTML = restaurant.neighborhood;
+  neighborhood.id = 'restaurant-neighborhood';
   li.append(neighborhood);
 
   const address = document.createElement('p');
-  address.tabIndex = 0;
   address.innerHTML = restaurant.address;
+  address.id = 'restaurant-address';
   li.append(address);
 
   const more = document.createElement('a');
@@ -190,6 +190,7 @@ createRestaurantHTML = (restaurant) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
   li.tabIndex = 0;
+  li.setAttribute('aria-labelledby', 'restaurant-name restaurant-neighborhood restaurant-address');
 
   return li
 }
@@ -207,20 +208,3 @@ addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 }
-
-/* 
- * Skip the map from the taborder and replace it with 
- * .filter-options > h2 > a
- */
-document.querySelector('nav h1 a')
-  .addEventListener('blur', () => {
-    const h2 = document.querySelector('.filter-options h2');
-    h2.tabIndex = -1;
-    h2.focus();
-    h2.classList.add('focus');
-  });
-/* remove the focus class on blur */
-const h2 =  document.querySelector('.filter-options h2');
-h2.addEventListener('blur', () => {
-  h2.classList.remove('focus');
-});
