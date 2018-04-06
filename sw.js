@@ -11,7 +11,7 @@
 // cache the restaurants information
 
 /* cache names */
-var staticCacheName = 'restaurant-static-v4';
+var staticCacheName = 'restaurant-static-v2';
 var contentImgsCache = 'restaurant-content-imgs';
 var allCaches = [
     staticCacheName,
@@ -31,6 +31,16 @@ self.addEventListener('install', function(event) {
                 'js/restaurant_info.js',
                 'data/restaurants.json',
                 'css/styles.css',
+                'img/1.jpg',
+                'img/2.jpg',
+                'img/3.jpg',
+                'img/4.jpg',
+                'img/5.jpg',
+                'img/6.jpg',
+                'img/7.jpg',
+                'img/8.jpg',
+                'img/9.jpg',
+                'img/10.jpg',
             ]);
         })
     );
@@ -70,10 +80,6 @@ self.addEventListener('fetch', function(event) {
             event.respondWith(caches.match('/data/restaurants.json'));
             return;
         }
-        if(requestUrl.pathname.startsWith('/img/')) {
-            event.respondWith(serveImage(event.request));
-            return;
-        }
     }
     
     event.respondWith(
@@ -84,21 +90,3 @@ self.addEventListener('fetch', function(event) {
         })
     );
 });
-
-/**
- * - serve the images from the cache if exist
- * - otherwise serve them from the network and 
- * put 'em in the cache 
- */
-function serveImage(request) {
-    return caches.open(contentImgsCache).then(function(cache) {
-        return cache.match(request.url).then(function(response) {
-            var networkFetch = fetch(request).then(function(networkResponse) {
-                cache.put(request.url, networkResponse.clone());
-                return networkResponse;
-            });
-
-            return response || networkFetch;
-        });
-    });
-}
