@@ -381,3 +381,11 @@ nav h1 a {
   border: 2px solid white;
 }
 
+@media screen and (max-width: 1070px) and (min-width: 700px) {
+  #reviews-container {
+    width: 45%;
+  }
+  #restaurant-name {
+    font-size: 18pt;
+  }
+}
