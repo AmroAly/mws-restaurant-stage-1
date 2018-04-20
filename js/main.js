@@ -8,30 +8,10 @@ var markers = []
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  updateRestaurants();
   fetchNeighborhoods();
   fetchCuisines();
-  // fetch restaurants data from cache
-  if(navigator.serviceWorker) {
-    fetchRestaurantsFromCache();
-  }
 });
-
-/**
- * Fetch restaurants data from cache
- * if any
- */
-fetchRestaurantsFromCache = () => {
-  return caches.match('/data/restaurants.json').then(function(data) {
-    if(data) {
-      return data.json();
-    }
-  }).then(function(response) {
-    if(response.restaurants) {
-      restaurants = response.restaurants;
-      updateRestaurants();
-    }
-  }).catch(() => {});
-}
 
 /**
  * Fetch all neighborhoods and set their HTML.

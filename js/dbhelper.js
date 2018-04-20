@@ -23,6 +23,53 @@ class DBHelper {
    * Using the Fetch api
    */
   static fetchRestaurants(callback) {
+    DBHelper.fetchRestaurantsFromIDB((error, restaurants) => {
+      // if there is no data in the indexedDB
+      // Here's what we will do
+      // fetch the restaurants from the network
+      // save it to the indexedDB 
+      if(error) {
+        DBHelper.fetchRestaurantsFromNetwork((error, restaurants) => {
+          if(restaurants) {
+            // save the restaurants into the IDB
+            DBHelper.saveRestaurantsIntoIDB(restaurants);
+            
+            callback(null, restaurants);
+          }
+          if(error) {
+            callback(error, null);
+          }
+        });
+      }
+
+      // restaurants found in IDB
+      if(restaurants) {
+        callback(null, restaurants);
+      }
+    })
+  }
+
+  /**
+   * Save the restaurants to the indexedDB
+   */
+
+   static saveRestaurantsIntoIDB(restaurants) {
+    const dbPromise = DBHelper.openIDB();
+    return dbPromise.then((db) => {
+      if(!db) return;
+      const store = db.transaction('restaurants', 'readwrite')
+                      .objectStore('restaurants');
+      restaurants.forEach((restaurant) => {
+        store.put(restaurant);
+      });
+    });
+   }
+
+  /**
+   * Fetch the restaurants
+   * from the network
+   */
+static fetchRestaurantsFromNetwork(callback) {
     return fetch(DBHelper.DATABASE_URL).then((response) => {
       return response.json();
     }).then((restaurants) => {
@@ -33,7 +80,46 @@ class DBHelper {
       const error = (`Request failed. Returned status of 404`);
       callback(error, null);
     });
+}
+
+  /**
+   * Fetch the restaurants 
+   * from the indexedDB
+   */
+static fetchRestaurantsFromIDB(callback) {
+    const dbPromise = DBHelper.openIDB();
+    return dbPromise.then((db) => {
+      if(!db) return;
+
+      const store = db.transaction('restaurants')
+            .objectStore('restaurants');
+
+      return store.getAll().then((restaurants) => {
+        if(restaurants.length) {
+          callback(null, restaurants);
+        } else {
+          const error = 'There is no restaurants in IDB';
+          callback(error, null);
+        }
+      });
+    }) 
   }
+
+  /**
+   * open indexedDB
+   */
+  static openIDB() {
+    if(!navigator.serviceWorker) {
+      return Promise.resolve();
+    }
+
+    return idb.open('restaurants', 1, (upgradeDB) => {
+      const store = upgradeDB.createObjectStore('restaurants', {
+        keyPath: 'id'
+      });
+    })
+  }
+
 
   /**
    * Fetch a restaurant by its ID.

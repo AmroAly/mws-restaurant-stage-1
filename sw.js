@@ -11,7 +11,7 @@
 // cache the restaurants information
 
 /* cache names */
-var staticCacheName = 'restaurant-static-v5';
+var staticCacheName = 'restaurant-static-v7';
 var contentImgsCache = 'restaurant-content-imgs';
 var allCaches = [
     staticCacheName,
@@ -40,6 +40,7 @@ self.addEventListener('install', function(event) {
                 'img/8.jpg',
                 'img/9.jpg',
                 'img/10.jpg',
+                'https://cdn.rawgit.com/jakearchibald/idb/master/lib/idb.js'
             ]);
         })
     );
@@ -75,12 +76,8 @@ self.addEventListener('fetch', function(event) {
             event.respondWith(caches.match('/restaurant.html'));
             return;
         }
-        // if(requestUrl.pathname === '/data/restaurants.json') {
-        //     event.respondWith(caches.match('/data/restaurants.json'));
-        //     return;
-        // }
     }
-    
+
     event.respondWith(
         caches.match(event.request).then(function(response) {
             if(response) return response;
