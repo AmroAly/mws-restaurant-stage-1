@@ -14,6 +14,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 /**
+ * this function has been created by Jeremy Wagner
+ * link: https://developers.google.com/web/fundamentals/performance/lazy-loading-guidance/images-and-video/
+ */
+lazyLoad = (myImage) => {
+  if ("IntersectionObserver" in window) {
+    let lazyImageObserver = new IntersectionObserver(function(entry, observer) {
+        if (entry.isIntersecting) {
+          let lazyImage = entry.target;
+          lazyImage.src = lazyImage.dataset.src;
+          lazyImage.srcset = lazyImage.dataset.srcset;
+          lazyImage.classList.remove("lazy");
+          lazyImageObserver.unobserve(lazyImage);
+        }
+    });
+
+    lazyImageObserver.observe(myImage);
+  } 
+}
+
+/**
  * Fetch all neighborhoods and set their HTML.
  */
 fetchNeighborhoods = () => {
@@ -145,24 +165,26 @@ createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
   const image = document.createElement('img');
+  lazyLoad(image);
   image.className = 'restaurant-img';
   image.alt = restaurant.name + ' photo';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.classList.add('lazy');
+  image.setAttribute('src', DBHelper.imageUrlForRestaurant(restaurant));
   li.append(image);
 
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
-  name.id = 'restaurant-name';
+  name.classList.add('restaurant-name');
   li.append(name);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
-  neighborhood.id = 'restaurant-neighborhood';
+  neighborhood.classList.add('restaurant-neighborhood');
   li.append(neighborhood);
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
-  address.id = 'restaurant-address';
+  address.classList.add('restaurant-address');
   li.append(address);
 
   const more = document.createElement('a');
@@ -170,7 +192,8 @@ createRestaurantHTML = (restaurant) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
   li.tabIndex = 0;
-  li.setAttribute('aria-labelledby', 'restaurant-name restaurant-neighborhood restaurant-address');
+  const label = `${restaurant.name} in ${restaurant.address}, ${restaurant.neighborhood}`;
+  li.setAttribute('aria-label', label);
 
   return li
 }
