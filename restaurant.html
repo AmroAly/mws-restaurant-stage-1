@@ -49,6 +49,26 @@
     <!-- Beginning reviews -->
     <section id="reviews-container" tabindex="0" aria-label="Reviews">
       <ul id="reviews-list"></ul>
+      <form id="review-form" tabindex="0" aria-labelledby="form-heading">
+        <h2 id="form-heading">Create A Review</h2>
+        <ul id="errors">
+        </ul>
+        <div>
+          <label for="name">Your Name</label>
+          <input type="text" id="name">
+        </div>
+        <div>
+          <label for="rating">Rating</label>
+          <input type="number" min="0" max="5" placeholder="5" id="rating">
+        </div>
+        <div>
+          <label for="comment">Comment</label>
+          <textarea id="comment"></textarea>
+        </div>
+        <div>
+          <button id="review-btn">Submit Review</button>
+        </div>
+      </form>
     </section>
     <!-- End reviews -->
   </main>
