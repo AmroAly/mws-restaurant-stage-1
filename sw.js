@@ -10,8 +10,12 @@
 // cache the images
 // cache the restaurants information
 
+importScripts('https://cdn.rawgit.com/jakearchibald/idb/master/lib/idb.js','js/dbhelper.js');
+
+const dbPromise = DBHelper.openIDB();
+
 /* cache names */
-var staticCacheName = 'restaurant-static-v1';
+var staticCacheName = 'restaurant-static-v2';
 var contentImgsCache = 'restaurant-content-imgs';
 var allCaches = [
     staticCacheName,
@@ -86,3 +90,74 @@ self.addEventListener('fetch', function(event) {
         })
     );
 });
+
+// Eventlistener for sync-new-review 
+self.addEventListener('sync', function(event) {
+    console.log('Background syncing', event);
+    if(event.tag == 'sync-new-reviews') {
+        console.log('Syncing new reviews');
+        event.waitUntil(
+            getSyncReviewsFromIDB().then(function(reviews) {
+                console.log(reviews);
+                // Send reviews to the server
+                reviews.forEach(review => {
+                    sendPostReview(review).then(function(res) {
+                        if(res.ok) {
+                            // create this method
+                            deleteItemFromDatabase(review.id);
+                        }
+                    })
+                });
+            })
+        );
+    }
+});
+
+function deleteItemFromDatabase(id) {
+
+    return dbPromise.then(function(db) {
+        if(!db) return; // always undefined
+
+        const tx = db.transaction('sync-reviews', 'readwrite');
+        const store =  tx.objectStore('sync-reviews');
+        store.delete(id);
+        return tx.complete;
+    }).then(function() {
+        console.log('item deleted');
+    })
+}
+
+function getSyncReviewsFromIDB() {
+    return dbPromise.then(function(db) {
+        console.log(db) // always undefined
+        if(!db) return;
+        const tx = db.transaction('sync-reviews');
+        const store =  tx.objectStore('sync-reviews');
+        return store.getAll();
+    });
+}
+
+function sendPostReview (review) {
+    const url = 'http://localhost:1337/reviews/';
+    return fetch(url, {
+        method: 'post',
+        body: JSON.stringify(review),
+    }).then(response => {
+        return response.json();
+    }).then((data) => {
+        // console.log(data);
+        return saveReviewsIntoIDB(data);    
+    }).catch((e) => {
+        console.log('something went wrong', e);
+    })
+}
+
+function saveReviewsIntoIDB(review) {
+    return dbPromise.then((db) => {
+        if(!db) return; // always undefined
+        const tx = db.transaction('reviews', 'readwrite')
+        const store = tx.objectStore('reviews');
+        store.put(review);
+        return tx.complete;
+      });
+}

@@ -1,19 +1,47 @@
 let restaurant;
 var map;
+let reviews;
 
 /**
- * Fetch restaurant  as soon as the page is loaded.
+ * Fetch restaurant and reviews as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  if(navigator.serviceWorker) {
-    fetchRestaurantFromURL((error, restaurant) => {
-      if(restaurant) {
-        self.restaurant = restaurant;
-        fillBreadcrumb();
-      }
-    });
-  }
+  fetchRestaurantFromURL((error, restaurant) => {
+    if(restaurant) {
+      self.restaurant = restaurant;
+      fillBreadcrumb();
+      // Fetch All Reviews;
+      fetchReviews();
+    }
+  });
 });
+
+/**
+ * Fetch Reviews
+ */
+fetchReviews = () => {
+  var flag = false;
+  DBHelper.fetchReviews((error, reviews) => {
+    if(reviews) {
+      // Fetch reviews by restaurant id
+      const restaurant_id = getParameterByName('id');
+      getReviewsByRestaurantId(restaurant_id, reviews);
+    }
+    if(!flag){
+      fillReviewsHTML()
+      flag = true;
+    }
+  });
+}
+
+/**
+ * Filter reviews for each restaurant
+ */
+getReviewsByRestaurantId = (restaurant_id, reviews) => {
+  self.reviews = reviews.filter((review) => {
+    return review.restaurant_id == restaurant_id;
+  });
+}
 
 /**
  * Initialize Google map, called from HTML.
@@ -80,8 +108,6 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  fillReviewsHTML();
 }
 
 /**
@@ -110,7 +136,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (reviews = self.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
@@ -141,7 +167,8 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  const my_date = new Date(review.createdAt);
+  date.innerHTML = my_date.toDateString();
   date.id = 'review-date';
   li.appendChild(date);
 
@@ -190,4 +217,73 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+/**
+ * Hanlding form submition
+ */
+document.querySelector('#review-form')
+  .addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    validateReviewFormFields((error, data) => {
+      if(data) {
+        document.getElementById("review-form").reset();
+        document.getElementById('reviews-list').appendChild(createReviewHTML(data));
+
+        // Register a Synchronization task
+        if('serviceWorker' in navigator && 'SyncManager' in window) {
+          navigator.serviceWorker.ready
+            .then((sw) => {
+              data['id'] = Date.now();
+              // console.log(data);
+              DBHelper.saveSyncReviewsIntoIDB(data)
+                .then(() => {
+                  return sw.sync.register('sync-new-reviews');
+                }).then(() => {
+                  console.log('You review was saved for syncing!');
+                }).catch((e) => {
+                  console.log(e);
+                });
+            });
+        } else {
+          DBHelper.createPostReview(data);
+        }
+      }
+  })
+});
+
+/**
+ * Validate the form fields
+ */
+validateReviewFormFields = (callback) => {
+  const restaurantId = getParameterByName('id')
+  const name = document.querySelector('#name').value.trim();
+  const rating = document.querySelector('#rating').value.trim();
+  const comment = document.querySelector('#comment').value.trim();
+  
+  const data = {
+    restaurant_id: restaurantId,
+    name: name,
+    rating: rating ? parseInt(rating): null,
+    comments: comment  
+  }
+
+  const errors_ul = document.querySelector('#errors');
+  errors_ul.innerHTML = '';
+  let errors = false;
+  Object.keys(data).forEach(function(k) {
+    if (!data[k]) {
+      errors = true;
+      const error_li = document.createElement('li');
+      error_li.appendChild(document.createTextNode(`The ${k} field can't be empty`));
+      errors_ul.appendChild(error_li);
+    }
+  });
+
+  if(errors) {
+    callback(true, null);
+    return;
+  }
+  callback(null, data);
 }
