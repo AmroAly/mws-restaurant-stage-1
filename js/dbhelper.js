@@ -218,9 +218,6 @@ static fetchRestaurantsFromIDB(callback) {
    * open indexedDB
    */
   static openIDB() {
-    if(!navigator.serviceWorker) {
-      return Promise.resolve();
-    }
     console.log('opening idb')
     return idb.open('restaurants-store', 3, (upgradeDB) => {
       switch (upgradeDB.oldVersion) {

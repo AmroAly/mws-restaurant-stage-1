@@ -93,21 +93,26 @@ self.addEventListener('fetch', function(event) {
 
 // Eventlistener for sync-new-review 
 self.addEventListener('sync', function(event) {
-    console.log('Background syncing', event);
     if(event.tag == 'sync-new-reviews') {
-        console.log('Syncing new reviews');
+        // console.log('Syncing new reviews');
         event.waitUntil(
             getSyncReviewsFromIDB().then(function(reviews) {
-                console.log(reviews);
                 // Send reviews to the server
+                let promises = [];
                 reviews.forEach(review => {
-                    sendPostReview(review).then(function(res) {
-                        if(res.ok) {
-                            // create this method
+                    let myPromise = sendPostReview({
+                        restaurant_id: review.restaurant_id, 
+                        name: review.name, 
+                        comments: review.comments, 
+                        rating: review.rating
+                    }).then(function(reviewResponse) {
+                        saveReviewsIntoIDB(reviewResponse).then(() => {
                             deleteItemFromDatabase(review.id);
-                        }
+                        })
                     })
-                });
+                    promises.push(myPromise);
+                })
+               return Promise.all(promises);
             })
         );
     }
@@ -116,25 +121,22 @@ self.addEventListener('sync', function(event) {
 function deleteItemFromDatabase(id) {
 
     return dbPromise.then(function(db) {
-        if(!db) return; // always undefined
+        if(!db) return; 
 
         const tx = db.transaction('sync-reviews', 'readwrite');
         const store =  tx.objectStore('sync-reviews');
         store.delete(id);
         return tx.complete;
-    }).then(function() {
-        console.log('item deleted');
     })
 }
 
 function getSyncReviewsFromIDB() {
     return dbPromise.then(function(db) {
-        console.log(db) // always undefined
         if(!db) return;
         const tx = db.transaction('sync-reviews');
         const store =  tx.objectStore('sync-reviews');
         return store.getAll();
-    });
+    })
 }
 
 function sendPostReview (review) {
@@ -144,17 +146,12 @@ function sendPostReview (review) {
         body: JSON.stringify(review),
     }).then(response => {
         return response.json();
-    }).then((data) => {
-        // console.log(data);
-        return saveReviewsIntoIDB(data);    
-    }).catch((e) => {
-        console.log('something went wrong', e);
     })
 }
 
 function saveReviewsIntoIDB(review) {
     return dbPromise.then((db) => {
-        if(!db) return; // always undefined
+        if(!db) return;
         const tx = db.transaction('reviews', 'readwrite')
         const store = tx.objectStore('reviews');
         store.put(review);
