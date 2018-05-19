@@ -3,6 +3,7 @@ let restaurants,
   cuisines
 var map
 var markers = []
+var flag;
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -17,21 +18,27 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * this function has been created by Jeremy Wagner
  * link: https://developers.google.com/web/fundamentals/performance/lazy-loading-guidance/images-and-video/
  */
-lazyLoad = (myImage) => {
-  if ("IntersectionObserver" in window) {
-    let lazyImageObserver = new IntersectionObserver(function(entry, observer) {
-        if (entry.isIntersecting) {
-          let lazyImage = entry.target;
-          lazyImage.src = lazyImage.dataset.src;
-          lazyImage.srcset = lazyImage.dataset.srcset;
-          lazyImage.classList.remove("lazy");
-          lazyImageObserver.unobserve(lazyImage);
-        }
-    });
+lazyLoad = (lazyImage) => {
+    // const lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+    if ("IntersectionObserver" in window) {
+      let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            let lazyImage = entry.target;
+            lazyImage.src = lazyImage.dataset.src;
+            // lazyImage.srcset = lazyImage.dataset.srcset;
+            lazyImage.classList.remove("lazy");
+            lazyImageObserver.unobserve(lazyImage);
+          }
+        });
+      });
 
-    lazyImageObserver.observe(myImage);
-  } 
-}
+    // lazyImages.forEach(function(lazyImage) {
+      lazyImageObserver.observe(lazyImage);
+    // });
+  }
+} 
+
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -101,7 +108,7 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  updateRestaurants();
+  // updateRestaurants();
 }
 
 /**
@@ -150,6 +157,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
+  
   // check if the map has been loaded
   if(map) {
     map.addListener('tilesloaded', function () { 
@@ -165,11 +173,13 @@ createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
 
   const image = document.createElement('img');
-  lazyLoad(image);
   image.className = 'restaurant-img';
   image.alt = restaurant.name + ' photo';
   image.classList.add('lazy');
-  image.setAttribute('src', DBHelper.imageUrlForRestaurant(restaurant));
+  
+  image.setAttribute('src', DBHelper.bluredImageUrlForRestaurant(restaurant));
+  image.setAttribute('data-src', DBHelper.imageUrlForRestaurant(restaurant));
+  lazyLoad(image);
   li.append(image);
 
   const name = document.createElement('h1');

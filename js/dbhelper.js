@@ -384,6 +384,18 @@ static createPostReview (review) {
   }
 
   /**
+   * Restaurant blured image URL.
+   */
+  static bluredImageUrlForRestaurant(restaurant) {
+    // for development we need to remove "/mws-restaurant-stage-1"
+    const url = window.location.href;
+    if(url.startsWith('https')) {
+      return (`/mws-restaurant-stage-1/img/${restaurant.photograph}`);
+    }
+    return (`/img/${restaurant.photograph || 10}-800_lazy_load.jpg`);    
+  }
+
+  /**
    * Map marker for a restaurant.
    */
   static mapMarkerForRestaurant(restaurant, map) {

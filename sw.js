@@ -44,6 +44,16 @@ self.addEventListener('install', function(event) {
                 'img/8.jpg',
                 'img/9.jpg',
                 'img/10.jpg',
+                'img/1-800_lazy_load.jpg',
+                'img/2-800_lazy_load.jpg',
+                'img/3-800_lazy_load.jpg',
+                'img/4-800_lazy_load.jpg',
+                'img/5-800_lazy_load.jpg',
+                'img/6-800_lazy_load.jpg',
+                'img/7-800_lazy_load.jpg',
+                'img/8-800_lazy_load.jpg',
+                'img/9-800_lazy_load.jpg',
+                'img/10-800_lazy_load.jpg',
                 'https://cdn.rawgit.com/jakearchibald/idb/master/lib/idb.js'
             ]);
         })
