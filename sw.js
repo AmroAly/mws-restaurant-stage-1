@@ -106,27 +106,39 @@ self.addEventListener('sync', function(event) {
     if(event.tag == 'sync-new-reviews') {
         // console.log('Syncing new reviews');
         event.waitUntil(
-            getSyncReviewsFromIDB().then(function(reviews) {
-                // Send reviews to the server
-                let promises = [];
-                reviews.forEach(review => {
-                    let myPromise = sendPostReview({
-                        restaurant_id: review.restaurant_id, 
-                        name: review.name, 
-                        comments: review.comments, 
-                        rating: review.rating
-                    }).then(function(reviewResponse) {
-                        saveReviewsIntoIDB(reviewResponse).then(() => {
-                            deleteItemFromDatabase(review.id);
-                        })
-                    })
-                    promises.push(myPromise);
-                })
-               return Promise.all(promises);
-            })
+           handleSyncEvent()
         );
     }
 });
+
+// Eventlistener for postMessage from the client 
+// when the user comes online 
+self.addEventListener('message', function(e) {
+    if(e.data.type == 'handle_sync_reviews') {
+        handleSyncEvent();
+    }
+})
+
+function handleSyncEvent() {
+    return getSyncReviewsFromIDB().then(function(reviews) {
+        // Send reviews to the server
+        let promises = [];
+        reviews.forEach(review => {
+            let myPromise = sendPostReview({
+                restaurant_id: review.restaurant_id, 
+                name: review.name, 
+                comments: review.comments, 
+                rating: review.rating
+            }).then(function(reviewResponse) {
+                saveReviewsIntoIDB(reviewResponse).then(() => {
+                    deleteItemFromDatabase(review.id);
+                })
+            })
+            promises.push(myPromise);
+        })
+       return Promise.all(promises);
+    });
+} 
 
 function deleteItemFromDatabase(id) {
 

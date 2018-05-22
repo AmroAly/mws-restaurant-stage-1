@@ -220,6 +220,17 @@ getParameterByName = (name, url) => {
 }
 
 /**
+ * Add event listener for online state
+ * So if there is any sync reviews in the IDB
+ * Will resubmit them to the server
+ */
+window.addEventListener('online', function(e) {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.controller.postMessage({ type: 'handle_sync_reviews' });
+  }
+});
+
+/**
  * Hanlding form submition
  */
 document.querySelector('#review-form')
