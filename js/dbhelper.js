@@ -115,7 +115,6 @@ static saveReviewsIntoIDB(reviews) {
 * Save Sync reviews into the indexed DB
 */
 static saveSyncReviewsIntoIDB(review) {
-  console.log(review);
   return DBHelper.openIDB().then((db) => {
     if(!db) return;
     const tx = db.transaction('sync-reviews', 'readwrite')
@@ -130,7 +129,6 @@ static saveSyncReviewsIntoIDB(review) {
  */
 static getSyncReviewsFromIDB() {
   return DBHelper.openIDB().then((db) => {
-      console.log(db);
       if(!db) return;
 
       const tx = db.transaction('sync-reviews');
@@ -218,7 +216,6 @@ static fetchRestaurantsFromIDB(callback) {
    * open indexedDB
    */
   static openIDB() {
-    console.log('opening idb')
     return idb.open('restaurants-store', 3, (upgradeDB) => {
       switch (upgradeDB.oldVersion) {
         case 0:

@@ -209,8 +209,8 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
 getParameterByName = (name, url) => {
   if (!url)
     url = window.location.href;
-  name = name.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
+    name = name.replace(/[\[\]]/g, '\\$&');
+    const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`),
     results = regex.exec(url);
   if (!results)
     return null;
@@ -228,6 +228,7 @@ window.addEventListener('online', function(e) {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.controller.postMessage({ type: 'handle_sync_reviews' });
   }
+  window.location.reload();
 });
 
 /**
@@ -291,6 +292,8 @@ validateReviewFormFields = (callback) => {
       errors_ul.appendChild(error_li);
     }
   });
+
+  data['createdAt'] = new Date().getTime();
 
   if(errors) {
     callback(true, null);

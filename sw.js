@@ -119,6 +119,7 @@ self.addEventListener('message', function(e) {
     }
 })
 
+// Handling the syncing reviews
 function handleSyncEvent() {
     return getSyncReviewsFromIDB().then(function(reviews) {
         // Send reviews to the server
