@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * link: https://developers.google.com/web/fundamentals/performance/lazy-loading-guidance/images-and-video/
  */
 lazyLoad = (lazyImage) => {
-    // const lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
     if ("IntersectionObserver" in window) {
       let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
         entries.forEach(function(entry) {
@@ -33,9 +32,7 @@ lazyLoad = (lazyImage) => {
         });
       });
 
-    // lazyImages.forEach(function(lazyImage) {
       lazyImageObserver.observe(lazyImage);
-    // });
   }
 } 
 
@@ -108,7 +105,7 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  // updateRestaurants();
+  addMarkersToMap();
 }
 
 /**
@@ -129,6 +126,9 @@ updateRestaurants = () => {
       console.error(error);
     } else {
       resetRestaurants(restaurants);
+      if(map) {
+        addMarkersToMap();
+      }
       fillRestaurantsHTML();
     }
   })
@@ -157,13 +157,6 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  
-  // check if the map has been loaded
-  if(map) {
-    map.addListener('tilesloaded', function () { 
-      addMarkersToMap();
-    });
-  }
 }
 
 /**
