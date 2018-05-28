@@ -146,27 +146,24 @@ createReviewHTML = (review) => {
   li.tabIndex = 0;
   const name = document.createElement('p');
   name.innerHTML = review.name;
-  name.id = 'review-name';
   li.appendChild(name);
 
   const date = document.createElement('p');
   const my_date = new Date(review.createdAt);
   date.innerHTML = my_date.toDateString();
-  date.id = 'review-date';
   li.appendChild(date);
 
   const rating = document.createElement('p');
   rating.innerHTML = `Rating: ${review.rating}`;
-  rating.id = 'review-rating';
   li.appendChild(rating);
 
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
-  comments.id = 'review-comment';
   li.appendChild(comments);
 
   li.tabIndex = 0;
-  li.setAttribute('aria-labelledby', 'review-name review-date review-rating review-comment');
+  const label = `${review.name} said ${review.comments} and rated the restaurant ${review.rating} out of 5`;
+  li.setAttribute('aria-label', label);
 
   return li;
 }
