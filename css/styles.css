@@ -213,15 +213,22 @@ nav h1 a {
 .inside #map-container {
   background: blue none repeat scroll 0 0;
   height: 87%;
-  position: fixed;
   right: 0;
   top: 80px;
   width: 50%;
+}
+.fixed {
+  position: fixed;
 }
 .inside #map {
   background-color: #ccc;
   height: 100%;
   width: 100%;
+}
+#map img#map-image,
+#map img#map-image-detail {
+  width: 100%;
+  height: 100%;
 }
 .inside #footer {
   padding: 0;

@@ -21,7 +21,9 @@
 
   <main id="maincontent" role="main">
     <section id="map-container">
-      <div id="map" role="application" aria-label="map"></div>
+      <div id="map" role="application" aria-label="map">
+        <img src="https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=1000x700&zoom=12&key=AIzaSyC0p8sC70ZxYQhYydDLntxNX5BwzHP604E" id="map-image" alt="Map">
+      </div>
     </section>
     <section>
       <div class="filter-options" tabindex="0" aria-labelledby="filter-heading">
@@ -41,8 +43,7 @@
   <script src="js/register_sw.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC71CkDCJpZrS5049UCvCW482DpTwo2aQo&libraries=places&callback=initMap"></script>
-
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC71CkDCJpZrS5049UCvCW482DpTwo2aQo&libraries=places&callback=initMap"></script> -->
 
   <footer id="footer">
     Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.

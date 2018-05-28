@@ -3,7 +3,6 @@ let restaurants,
   cuisines
 var map
 var markers = []
-var flag;
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -93,22 +92,6 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
 }
 
 /**
- * Initialize Google map, called from HTML.
- */
-window.initMap = () => {
-  let loc = {
-    lat: 40.722216,
-    lng: -73.987501
-  };
-  self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
-    center: loc,
-    scrollwheel: false
-  });
-  addMarkersToMap();
-}
-
-/**
  * Update page and map for current restaurants.
  */
 updateRestaurants = () => {
@@ -126,12 +109,10 @@ updateRestaurants = () => {
       console.error(error);
     } else {
       resetRestaurants(restaurants);
-      if(map) {
-        addMarkersToMap();
-      }
+      addMarkersToMap();
       fillRestaurantsHTML();
     }
-  })
+  });
 }
 
 /**
@@ -205,12 +186,15 @@ createRestaurantHTML = (restaurant) => {
  * Add markers for current restaurants to the map.
  */
 addMarkersToMap = (restaurants = self.restaurants) => {
+  let latlngs = [];
   restaurants.forEach(restaurant => {
-    // Add marker to the map
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.map);
-    google.maps.event.addListener(marker, 'click', () => {
-      window.location.href = marker.url
-    });
-    self.markers.push(marker);
+    latlngs.push(Object.values(restaurant.latlng))
+  })
+  latlngsStr = latlngs.join('|');
+  let url = `https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&markers=${latlngsStr}&size=1000x700&zoom=12&key=AIzaSyC0p8sC70ZxYQhYydDLntxNX5BwzHP604E`;
+  const img = document.querySelector('#map-image');
+  img.src = url;
+  caches.open('restaurant-static-v2').then(cache => {
+    return cache.add(url);
   });
 }

@@ -34,8 +34,10 @@
   <main id="maincontent" role="main">
     <!-- Beginning restaurant -->
     <!-- Beginning map -->
-    <aside id="map-container">
-      <div id="map" role="application" aria-label="map"></div>
+    <aside id="map-container" class="fixed">
+      <div id="map" role="application" aria-label="map">
+        <img src="https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&size=1000x700&zoom=12&key=AIzaSyC0p8sC70ZxYQhYydDLntxNX5BwzHP604E" id="map-image-detail" alt="Map">        
+      </div>
     </aside>
     <!-- End map -->
     <section id="restaurant-container" tabindex="0" aria-labelledby="restaurant-name restaurant-cuisine restaurant-address">
@@ -90,7 +92,7 @@
   <!-- Main javascript file -->
   <script type="text/javascript" src="js/restaurant_info.js"></script>
   <!-- Google Maps -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC71CkDCJpZrS5049UCvCW482DpTwo2aQo&libraries=places&callback=initMap"></script>
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC71CkDCJpZrS5049UCvCW482DpTwo2aQo&libraries=places&callback=initMap"></script> -->
   <!-- End scripts -->
 
 </body>
