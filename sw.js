@@ -55,7 +55,8 @@ self.addEventListener('install', function(event) {
                 'img/9-800_lazy_load.jpg',
                 'img/10-800_lazy_load.jpg',
                 'https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&markers=40.713829,-73.989667|40.683555,-73.966393|40.747143,-73.985414|40.722216,-73.987501|40.705089,-73.933585|40.674925,-74.016162|40.727397,-73.983645|40.726584,-74.002082|40.743797,-73.950652|40.743394,-73.954235&size=1000x700&zoom=12&key=AIzaSyC0p8sC70ZxYQhYydDLntxNX5BwzHP604E',
-                'https://cdn.rawgit.com/jakearchibald/idb/master/lib/idb.js'
+                'https://cdn.rawgit.com/jakearchibald/idb/master/lib/idb.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
             ]);
         })
     );

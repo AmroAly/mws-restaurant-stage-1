@@ -13,9 +13,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
       // Fetch All Reviews;
       fetchReviews();
       addMarkerToMap(restaurant);
+      updateIconData();
     }
   });
 });
+
+updateIconData = (restaurant = self.restaurant) => {
+  const i = document.querySelector('#star-icon');
+  const favoriteLink = DBHelper.urlForToggleFavoriteLink(restaurant);
+  i.setAttribute('data-link', favoriteLink);
+  i.setAttribute('data-id', restaurant.id);
+  if(restaurant.is_favorite == 'true') {
+    i.classList.add('checked');
+  } else {
+    i.classList.remove('checked');
+  }
+}
 
 /**
  * Fetch Reviews
@@ -294,3 +307,16 @@ addMarkerToMap = (restaurant) => {
     return cache.add(url);
   });
 }
+
+  const star = document.querySelector('#star-icon');
+  star.addEventListener('click', function(e) {
+    let url = star.dataset.link;
+    let id = star.dataset.id;
+    return fetch(url, {
+      method: 'put'
+    }).then(function() {
+      DBHelper.updateRestaurantIsFavoriteInIDB(id);
+      self.restaurant.is_favorite = self.restaurant.is_favorite == "false" ? "true": "false"; 
+      updateIconData();
+    });
+  });

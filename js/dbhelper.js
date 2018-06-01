@@ -361,11 +361,37 @@ static createPostReview (review) {
     });
   }
 
+/**
+ * 
+ */
+static updateRestaurantIsFavoriteInIDB(id) {
+  DBHelper.fetchRestaurantById(id, function(error, restaurant) {
+    if(restaurant) {
+      return DBHelper.openIDB().then((db) => {
+        if(!db) return;
+    
+        const tx = db.transaction('restaurants', 'readwrite');
+        const store = tx.objectStore('restaurants');
+        const is_favorite = restaurant.is_favorite == 'true' ? 'false' : 'true';
+        return store.put({...restaurant,is_favorite});
+      });
+    }
+    console.log('error', error);
+  })
+}
+
   /**
    * Restaurant page URL.
    */
   static urlForRestaurant(restaurant) {
     return (`./restaurant.html?id=${restaurant.id}`);
+  }
+
+  /**
+   * Toggle favorite for restaurant link
+   */
+  static urlForToggleFavoriteLink(restaurant) {
+    return  (`http://localhost:1337/restaurants/${restaurant.id}/?is_favorite=${restaurant.is_favorite == 'true' ? false:true}`)
   }
 
   /**

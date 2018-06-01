@@ -202,6 +202,23 @@ nav h1 a {
   text-decoration: none;
   text-transform: uppercase;
 }
+.image {
+  position: relative;
+}
+.fa {
+  position: absolute;
+  margin-left: 10px;
+  font-size: 50px;
+  margin-top: 10px;
+  color: #ffffff94;
+  cursor: pointer;
+}
+.fa:hover {
+  color: #ffb405e0;
+}
+.checked {
+  color: #ffb405e0;
+}
 
 /* ====================== Restaurant Details ====================== */
 .inside header {
