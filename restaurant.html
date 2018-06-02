@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- Main CSS file -->
   <link rel="stylesheet" href="css/styles.css" type="text/css">
   <link rel="manifest" href="/manifest.json">
@@ -43,7 +42,7 @@
     <!-- End map -->
     <section id="restaurant-container" tabindex="0" aria-labelledby="restaurant-name restaurant-cuisine restaurant-address">
       <h1 id="restaurant-name"></h1>
-      <i class="fa fa-star" id="star-icon"></i>
+      <i class="star" id="star-icon"></i>
       <img id="restaurant-img">
       <p id="restaurant-cuisine"></p>
       <p id="restaurant-address"></p>
@@ -87,15 +86,7 @@
   <!-- Beginning scripts -->
   <script type="application/javascript" charset="utf-8" src="https://cdn.rawgit.com/jakearchibald/idb/master/lib/idb.js"></script>
   
-  <script src="js/register_sw.js"></script>
-  
-  <!-- Database helpers -->
-  <script type="text/javascript" src="js/dbhelper.js"></script>
-  <!-- Main javascript file -->
-  <script type="text/javascript" src="js/restaurant_info.js"></script>
-  <!-- Google Maps -->
-  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC71CkDCJpZrS5049UCvCW482DpTwo2aQo&libraries=places&callback=initMap"></script> -->
-  <!-- End scripts -->
+  <script src="build/main.js"></script>
 
 </body>
 
