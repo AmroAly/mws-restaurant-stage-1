@@ -1,3 +1,6 @@
+/*
+* The star shape css in this file created by https://codepen.io/fxm90/
+*/
 @charset "utf-8";
 /* CSS Document */
 
@@ -202,24 +205,53 @@ nav h1 a {
   text-decoration: none;
   text-transform: uppercase;
 }
-.image {
-  position: relative;
-}
-.fa {
+.star {
   position: absolute;
   margin-left: 10px;
-  font-size: 50px;
   margin-top: 10px;
-  color: #ffffff94;
-  cursor: pointer;
+  cursor: pointer;  
+  display: inline-block;
+  width: 0;
+  height: 0;
+  
+  margin-left: .9em;
+  margin-right: .9em;
+  margin-bottom: 1.2em;
+  
+  border-right:  .3em solid transparent;
+  border-bottom: .7em  solid rgb(241, 237, 219);
+  border-left:   .3em solid transparent;
+
+  /* Controlls the size of the stars. */
+  font-size: 24px;
 }
-.fa:hover {
-  color: #ffb405e0;
-}
-.checked {
-  color: #ffb405e0;
+.star:before, .star:after {
+  content: '';
+  
+  display: block;
+  width: 0;
+  height: 0;
+  
+  position: absolute;
+  top: .6em;
+  left: -1em;
+
+  border-right:  1em solid transparent;
+  border-bottom: .7em  solid rgb(241, 237, 219);
+  border-left:   1em solid transparent;
+
+  transform: rotate(-35deg);
 }
 
+.star:after {  
+  transform: rotate(35deg);
+}
+
+.star.open,
+.star.open:before,
+.star.open:after {
+  border-bottom: .7em  solid #FC0;
+}
 /* ====================== Restaurant Details ====================== */
 .inside header {
   position: fixed;
