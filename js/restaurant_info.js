@@ -1,3 +1,4 @@
+if(window.location.pathname == "/restaurant.html") {
 let restaurant;
 var map;
 let reviews;
@@ -18,22 +19,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
   });
 });
 
-updateIconData = (restaurant = self.restaurant) => {
+const updateIconData = (restaurant = self.restaurant) => {
   const i = document.querySelector('#star-icon');
   const favoriteLink = DBHelper.urlForToggleFavoriteLink(restaurant);
   i.setAttribute('data-link', favoriteLink);
   i.setAttribute('data-id', restaurant.id);
   if(restaurant.is_favorite == 'true') {
-    i.classList.add('checked');
+    i.classList.add('open');
+    i.setAttribute('title', 'unfavorite restaurant!');
   } else {
-    i.classList.remove('checked');
+    i.classList.remove('open');
+    i.setAttribute('title', 'favorite restaurant!');    
   }
 }
 
 /**
  * Fetch Reviews
  */
-fetchReviews = () => {
+const fetchReviews = () => {
   var flag = false;
   DBHelper.fetchReviews((error, reviews) => {
     if(reviews) {
@@ -51,7 +54,7 @@ fetchReviews = () => {
 /**
  * Filter reviews for each restaurant
  */
-getReviewsByRestaurantId = (restaurant_id, reviews) => {
+const getReviewsByRestaurantId = (restaurant_id, reviews) => {
   self.reviews = reviews.filter((review) => {
     return review.restaurant_id == restaurant_id;
   });
@@ -60,7 +63,7 @@ getReviewsByRestaurantId = (restaurant_id, reviews) => {
 /**
  * Get current restaurant from page URL.
  */
-fetchRestaurantFromURL = (callback) => {
+const fetchRestaurantFromURL = (callback) => {
   if (self.restaurant) { // restaurant already fetched!
     callback(null, self.restaurant)
     return;
@@ -85,7 +88,7 @@ fetchRestaurantFromURL = (callback) => {
 /**
  * Create restaurant HTML and add it to the webpage
  */
-fillRestaurantHTML = (restaurant = self.restaurant) => {
+const fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
@@ -109,7 +112,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
  */
-fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
+const fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
   const hours = document.getElementById('restaurant-hours');
   for (let key in operatingHours) {
     const row = document.createElement('tr');
@@ -132,7 +135,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.reviews) => {
+const fillReviewsHTML = (reviews = self.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
@@ -154,7 +157,7 @@ fillReviewsHTML = (reviews = self.reviews) => {
 /**
  * Create review HTML and add it to the webpage.
  */
-createReviewHTML = (review) => {
+const createReviewHTML = (review) => {
   const li = document.createElement('li');
   li.tabIndex = 0;
   const name = document.createElement('p');
@@ -184,7 +187,7 @@ createReviewHTML = (review) => {
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
-fillBreadcrumb = (restaurant=self.restaurant) => {
+const fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
   const a = document.createElement('a');
@@ -199,7 +202,7 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
 /**
  * Get a parameter by name from page URL.
  */
-getParameterByName = (name, url) => {
+const getParameterByName = (name, url) => {
   if (!url)
     url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -221,7 +224,6 @@ window.addEventListener('online', function(e) {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.controller.postMessage({ type: 'handle_sync_reviews' });
   }
-  window.location.reload();
 });
 
 /**
@@ -261,7 +263,7 @@ document.querySelector('#review-form')
 /**
  * Validate the form fields
  */
-validateReviewFormFields = (callback) => {
+const validateReviewFormFields = (callback) => {
   const restaurantId = getParameterByName('id')
   const name = document.querySelector('#name').value.trim();
   const rating = document.querySelector('#rating').value.trim();
@@ -298,7 +300,7 @@ validateReviewFormFields = (callback) => {
 /**
  * Add marker to the map
  */
-addMarkerToMap = (restaurant) => {
+const addMarkerToMap = (restaurant) => {
   let latlng = Object.values(restaurant.latlng);
   let url = `https://maps.googleapis.com/maps/api/staticmap?center=40.722216,-73.987501&markers=${latlng}&size=1000x700&zoom=12&key=AIzaSyC0p8sC70ZxYQhYydDLntxNX5BwzHP604E`;
   const img = document.querySelector('#map-image-detail');
@@ -320,3 +322,4 @@ addMarkerToMap = (restaurant) => {
       updateIconData();
     });
   });
+}
