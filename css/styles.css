@@ -162,6 +162,7 @@ nav h1 a {
   padding: 0 30px 25px;
   text-align: left;
   width: 270px;
+  position: relative;
 }
 #restaurants-list .restaurant-img {
   background-color: #ccc;
@@ -249,8 +250,18 @@ nav h1 a {
 
 .star.open,
 .star.open:before,
-.star.open:after {
+.star.open:after,
+.star.main,
+.star.main:before,
+.star.main:after {
   border-bottom: .7em  solid #FC0;
+}
+.star.main {
+  top: 10px;
+  cursor: default;
+}
+li.favorite {
+  border: 2px solid #FC0 !important;
 }
 /* ====================== Restaurant Details ====================== */
 .inside header {

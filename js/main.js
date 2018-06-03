@@ -157,6 +157,15 @@ const createRestaurantHTML = (restaurant) => {
   lazyLoad(image);
   li.append(image);
 
+  if(restaurant.is_favorite == 'true') {
+    li.classList.add('favorite');
+    const i = document.createElement('i');
+    i.classList.add('star', 'main');
+    li.append(i);
+  } else {
+    li.classList.remove('favorite');
+  }
+
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
   name.classList.add('restaurant-name');

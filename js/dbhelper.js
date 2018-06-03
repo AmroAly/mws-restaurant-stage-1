@@ -216,7 +216,7 @@ static fetchRestaurantsFromIDB(callback) {
    * open indexedDB
    */
   static openIDB() {
-    return idb.open('restaurants-store', 3, (upgradeDB) => {
+    return idb.open('restaurants-store', 4, (upgradeDB) => {
       switch (upgradeDB.oldVersion) {
         case 0:
           upgradeDB.createObjectStore('restaurants', {
@@ -228,6 +228,10 @@ static fetchRestaurantsFromIDB(callback) {
           });
         case 2:
           upgradeDB.createObjectStore('sync-reviews', {
+            keyPath: 'id'
+          });
+        case 3:
+          upgradeDB.createObjectStore('sync-favorites', {
             keyPath: 'id'
           });
         }
@@ -362,7 +366,7 @@ static createPostReview (review) {
   }
 
 /**
- * 
+ * Update the favorite status in idb for restaurant
  */
 static updateRestaurantIsFavoriteInIDB(id) {
   DBHelper.fetchRestaurantById(id, function(error, restaurant) {
@@ -373,7 +377,9 @@ static updateRestaurantIsFavoriteInIDB(id) {
         const tx = db.transaction('restaurants', 'readwrite');
         const store = tx.objectStore('restaurants');
         const is_favorite = restaurant.is_favorite == 'true' ? 'false' : 'true';
-        return store.put({...restaurant,is_favorite});
+        store.put({...restaurant,is_favorite});
+        console.log('Updated successfully')
+        return tx.complete;
       });
     }
     console.log('error', error);
@@ -418,18 +424,25 @@ static updateRestaurantIsFavoriteInIDB(id) {
     return (`/img/${restaurant.photograph || 10}-800_lazy_load.jpg`);    
   }
 
-  /**
-   * Map marker for a restaurant.
-   */
-  static mapMarkerForRestaurant(restaurant, map) {
-    const marker = new google.maps.Marker({
-      position: restaurant.latlng,
-      title: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant),
-      map: map,
-      animation: google.maps.Animation.DROP}
-    );
-    return marker;
-  }
+/**
+ * Add  restaurant to favorite
+ */
+static addRestaurantToFavorite(url) {
+  return fetch(url, {
+    method: 'put'
+  });
+}
 
+/**
+ * save sync favorite links into idb
+ */
+static saveSyncFavoritesIntoIDB(favorite) {
+  return DBHelper.openIDB().then((db) => {
+    if(!db) return;
+    const tx = db.transaction('sync-favorites', 'readwrite')
+    const store = tx.objectStore('sync-favorites');
+    store.put(favorite);
+    return tx.complete;
+  });
+}
 }

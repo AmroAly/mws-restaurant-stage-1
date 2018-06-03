@@ -223,6 +223,7 @@ const getParameterByName = (name, url) => {
 window.addEventListener('online', function(e) {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.controller.postMessage({ type: 'handle_sync_reviews' });
+    navigator.serviceWorker.controller.postMessage({ type: 'handle_sync_favorites' });
   }
 });
 
@@ -310,16 +311,31 @@ const addMarkerToMap = (restaurant) => {
   });
 }
 
-  const star = document.querySelector('#star-icon');
-  star.addEventListener('click', function(e) {
-    let url = star.dataset.link;
-    let id = star.dataset.id;
-    return fetch(url, {
-      method: 'put'
-    }).then(function() {
-      DBHelper.updateRestaurantIsFavoriteInIDB(id);
-      self.restaurant.is_favorite = self.restaurant.is_favorite == "false" ? "true": "false"; 
-      updateIconData();
-    });
-  });
+const star = document.querySelector('#star-icon');
+star.addEventListener('click', function(e) {
+  let url = star.dataset.link;
+  let restaurantId = star.dataset.id;
+  if('serviceWorker' in navigator && 'SyncManager' in window) {
+    navigator.serviceWorker.ready
+      .then((sw) => {
+        self.restaurant.is_favorite = self.restaurant.is_favorite == 'true' ? 'false' : 'true';
+        updateIconData();
+        DBHelper.saveSyncFavoritesIntoIDB({url, id:restaurantId})
+        .then(() => {
+          return sw.sync.register('sync-add-favorites');
+        }).then(() => {
+          DBHelper.updateRestaurantIsFavoriteInIDB(restaurantId);
+        }).catch((e) => {
+          console.log('error in syncing the favorite link', e);
+        })
+      });
+  } else {
+    DBHelper.addRestaurantToFavorite(url)
+      .then(() => {
+        DBHelper.updateRestaurantIsFavoriteInIDB(restaurantId);
+        self.restaurant.is_favorite = self.restaurant.is_favorite == "false" ? "true": "false"; 
+        updateIconData();
+      });
+  }
+});
 }

@@ -27,6 +27,7 @@ self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open(staticCacheName).then(function(cache) {
             return cache.addAll([
+                'manifest.json',
                 '/index.html',
                 '/restaurant.html',
                 'css/styles.css',
@@ -104,7 +105,13 @@ self.addEventListener('sync', function(event) {
     if(event.tag == 'sync-new-reviews') {
         // console.log('Syncing new reviews');
         event.waitUntil(
-           handleSyncEvent()
+            handleSyncEventForHandlingSyncReviews()
+        );
+    }
+    if(event.tag == 'sync-add-favorites') {
+        // console.log('Syncing new reviews');
+        event.waitUntil(
+            handleSyncEventForHandlingSyncFavoriteLinks()
         );
     }
 });
@@ -113,12 +120,15 @@ self.addEventListener('sync', function(event) {
 // when the user comes online 
 self.addEventListener('message', function(e) {
     if(e.data.type == 'handle_sync_reviews') {
-        handleSyncEvent();
+        handleSyncEventForHandlingSyncReviews();
+    }
+    if(e.data.type == 'handle_sync_favorites') {
+        handleSyncEventForHandlingSyncFavoriteLinks();
     }
 })
 
 // Handling the syncing reviews
-function handleSyncEvent() {
+function handleSyncEventForHandlingSyncReviews() {
     return getSyncReviewsFromIDB().then(function(reviews) {
         // Send reviews to the server
         let promises = [];
@@ -137,7 +147,64 @@ function handleSyncEvent() {
         })
        return Promise.all(promises);
     });
-} 
+}
+
+// Handling sync event for favorite links
+function handleSyncEventForHandlingSyncFavoriteLinks() {
+    return getSyncFavortieLinksFromIDB().then(function(links) {
+        let promises = [];
+        links.forEach(favoriteLink => {
+            let myPromise = fetch(favoriteLink.url, {
+                method: 'put'
+            }).then(function() {
+                deleteFavoriteLinkFromIDB(favoriteLink.id);
+            });
+            promises.push(myPromise);
+        });
+       return Promise.all(promises);
+    });
+}
+
+function updateRestauranInIDB(id) {
+    return dbPromise.then(function(db) {
+        DBHelper.fetchRestaurantById(id, function(error, restaurant) {
+            if(restaurant) {
+              return DBHelper.openIDB().then((db) => {
+                if(!db) return;
+            
+                const tx = db.transaction('restaurants', 'readwrite');
+                const store = tx.objectStore('restaurants');
+                const is_favorite = restaurant.is_favorite == 'true' ? 'false' : 'true';
+                store.put({...restaurant,is_favorite});
+                console.log('Updated successfully')
+                return tx.complete;
+              });
+            }
+            console.log('error', error);
+          })
+    });
+}
+
+// delete the synced favorite links in idb
+function deleteFavoriteLinkFromIDB(id) {
+    return dbPromise.then(function(db) {
+        if(!db) return; 
+
+        const tx = db.transaction('sync-favorites', 'readwrite');
+        const store =  tx.objectStore('sync-favorites');
+        store.delete(id);
+        return tx.complete;
+    })
+}
+
+function getSyncFavortieLinksFromIDB() {
+    return dbPromise.then(function(db) {
+        if(!db) return;
+        const tx = db.transaction('sync-favorites');
+        const store =  tx.objectStore('sync-favorites');
+        return store.getAll();
+    })
+}
 
 function deleteItemFromDatabase(id) {
 
